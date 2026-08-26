@@ -1,8 +1,8 @@
 """Tunable assumptions. Every value here is a documented estimate."""
-from crowd_shelter.domain.person import WalkingProfile
 
 from typing import Final
 
+from crowd_shelter.domain.person import WalkingProfile
 from crowd_shelter.domain.shelter import ShelterKind
 
 #: Seconds from siren to impact in central Israel.
@@ -32,6 +32,7 @@ def estimate_capacity(kind: ShelterKind, area_sqm: float | None) -> tuple[int, b
     if area_sqm is not None and area_sqm > 0:
         return max(1, int(area_sqm / SQUARE_METRES_PER_PERSON)), False
     return DEFAULT_CAPACITY_BY_KIND[kind], True
+
 
 #: Assumed walking speed in metres per second, by mobility profile.
 #: Values reflect urgent movement, not casual walking pace.
