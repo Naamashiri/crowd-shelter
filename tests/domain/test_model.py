@@ -1,4 +1,4 @@
-import math
+from dataclasses import FrozenInstanceError
 
 import pytest
 
@@ -29,7 +29,7 @@ def test_distance_is_symmetric() -> None:
 def test_is_immutable() -> None:
     point = GeoPoint(lat=32.0, lon=34.0)
 
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         point.lat = 33.0  # type: ignore[misc]
 
 
@@ -37,3 +37,9 @@ def test_is_immutable() -> None:
 def test_rejects_out_of_range_latitude(bad_lat: float) -> None:
     with pytest.raises(ValueError, match="Latitude"):
         GeoPoint(lat=bad_lat, lon=34.0)
+
+
+@pytest.mark.parametrize("bad_lon", [181.0, -181.0, 360.0])
+def test_rejects_out_of_range_longitude(bad_lon: float) -> None:
+    with pytest.raises(ValueError, match="Longitude"):
+        GeoPoint(lat=32.0, lon=bad_lon)
