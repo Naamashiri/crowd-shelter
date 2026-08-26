@@ -2,7 +2,7 @@
 
 from typing import Final
 
-from crowd_shelter.domain.model import ShelterKind
+from crowd_shelter.domain.shelter import ShelterKind
 
 #: Seconds from siren to impact in central Israel.
 ALERT_TIME_BUDGET_SECONDS: Final = 90.0
