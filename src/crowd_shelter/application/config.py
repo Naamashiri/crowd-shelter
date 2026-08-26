@@ -2,6 +2,7 @@
 
 from typing import Final
 
+from crowd_shelter.domain.person import WalkingProfile
 from crowd_shelter.domain.shelter import ShelterKind
 
 #: Seconds from siren to impact in central Israel.
@@ -31,3 +32,27 @@ def estimate_capacity(kind: ShelterKind, area_sqm: float | None) -> tuple[int, b
     if area_sqm is not None and area_sqm > 0:
         return max(1, int(area_sqm / SQUARE_METRES_PER_PERSON)), False
     return DEFAULT_CAPACITY_BY_KIND[kind], True
+
+
+#: Assumed walking speed in metres per second, by mobility profile.
+#: Values reflect urgent movement, not casual walking pace.
+WALKING_SPEED_MPS: Final[dict[WalkingProfile, float]] = {
+    WalkingProfile.ADULT: 1.4,
+    WalkingProfile.ELDERLY: 0.9,
+    WalkingProfile.MOBILITY_IMPAIRED: 0.6,
+    WalkingProfile.PARENT_WITH_STROLLER: 1.0,
+}
+
+
+def walking_speed(profile: WalkingProfile) -> float:
+    """Return the assumed walking speed in m/s for a mobility profile."""
+    return WALKING_SPEED_MPS[profile]
+
+
+def reachable_distance_metres(profile: WalkingProfile) -> float:
+    """Maximum distance coverable within the alert budget, after reaction time.
+
+    This is the hard constraint that defines which shelters are viable
+    for a given person.
+    """
+    return walking_speed(profile) * (ALERT_TIME_BUDGET_SECONDS - REACTION_TIME_SECONDS)
